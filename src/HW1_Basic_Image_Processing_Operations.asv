@@ -1,27 +1,28 @@
-% TODO: DONE 1. Read and display the image using Matlab (10 points). 
-% TODO: DONE 2. Display each band (Red, Green and Blue) of the image file (15 points) 
+% DONE: 1. Read and display the image using Matlab (10 points). 
+% DONE: 2. Display each band (Red, Green and Blue) of the image file (15 points) 
 %       Hint: Red = I[:][:][1] captures the read component of the image and stores it into 
 %       array Red.    
-% TODO: DONE 3. Convert the image into YCbCr color space: (5 points) 
+% DONE: 3. Convert the image into YCbCr color space: (5 points) 
 %       3.1. Matlab provides a command “rgb2ycbcr” to convert an RGB image into a 
 %       YCbCr image.  
 %       3.2. Matlab also provides a command "ycbcr2rgb" to convert a YCbCr image into 
 %       RGB format.   
-% TODO: DONE 4. Display each band separately (Y, Cb and Cr bands). (10 points) 
-% TODO: 5. Subsample Cb and Cr bands using 4:2:0 and display both bands. (10 points) 
-% TODO: 6. Upsample and display the Cb and Cr bands using: (15 points) 
-% TODO: 6.1. Linear interpolation 
-% TODO: 6.2. Simple row or column replication. 
+% DONE: 4. Display each band separately (Y, Cb and Cr bands). (10 points) 
+% DONE: 5. Subsample Cb and Cr bands using 4:2:0 and display both bands. (10 points) 
+% DONE: 6. Upsample and display the Cb and Cr bands using: (15 points) 
+%       6.1. Linear interpolation 
+%       6.2. Simple row or column replication. 
+
 % TODO: 7. Convert the image into RGB format. (5 points) 
 % TODO: 8. Display the original and reconstructed images (the image restored from the YCbCr 
-% coordinate). (5 points) 
+%       coordinate). (5 points) 
 % TODO: 9. Comment on the visual quality of the reconstructed image for both the upsampling 
-% cases. (5 points) 
+%       cases. (5 points) 
 % TODO: 10. Measure MSE between the original and reconstructed images (obtained using linear 
-% interpolation only). Comment on the results. (10 points) 
+%       interpolation only). Comment on the results. (10 points) 
 % TODO: 11. Comment on the compression ratio achieved by subsampling Cb and Cr components 
-% for 4:2:0 approach. Please note that you do not send the pixels which are made zero in 
-% the row and columns during subsampling. (5 points) 
+%       for 4:2:0 approach. Please note that you do not send the pixels which are made zero in 
+%       the row and columns during subsampling. (5 points) 
 
 
 % Read and display the image using Matlab (10 points). 
@@ -32,6 +33,7 @@
 % size(RGBImage)
 
 clc;	% Clear command window.
+clear;
 close all;	% Close all figure windows except those created by imtool.
 workspace;	% Make sure the workspace panel is showing.
 
@@ -97,4 +99,51 @@ subplot(2,2,4);
 imshow(Cr_components, []);
 title("Cr Component");
 
-%% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands. 
+%% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands.
+% create System object for Sampling
+% https://www.mathworks.com/help/vision/ref/vision.chromaresampler-system-object.html#mw_57bd7bcc-9f89-491f-b859-bdd3b7029323
+
+% subsampling is the procedure of removing pixels and reducing image size
+
+% setting up subsample using 4:2:0
+resampler = vision.ChromaResampler;
+resampler.Resampling = '4:4:4 to 4:2:0 (MPEG1)';
+% apply subsample to Cb and Cr components
+[Cb_components_subsampled, Cr_components_subsampled] = resampler(Cb_components, Cr_components);
+% plot
+figure(3);
+subplot(3,2,1);
+imshow(Cb_components_subsampled, []);
+title("Cb 4:2:0 Subsampling");
+subplot(3,2,2);
+imshow(Cr_components_subsampled, []);
+title("Cr 4:2:0 Subsampling");
+
+%% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
+% setting up upscale using linear interpolation
+release(resampler);
+resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
+resampler.InterpolationFilter = "Linear"; % LINEAR IS THE DEFAULT
+% apply upsample to Cb and Cr components
+[Cb_components_upsample_lint_int, Cr_components_upsample_lin_int] = resampler(Cb_components_subsampled, Cr_components_subsampled);
+% plot
+subplot(3,2,3);
+imshow(Cb_components_upsample_lint_int, []);
+title("Cb Lin. Int. Upsampling.");
+subplot(3,2,4);
+imshow(Cr_components_upsample_lin_int, []);
+title("Cr Lin. Int. Upsampling");
+%% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
+% setting up upsample using pixel replication
+release(resampler);
+resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
+resampler.InterpolationFilter = 'Pixel replication';
+% apply upsample to Cb and Cr components
+[Cb_components_upsample_pix_rep, Cr_components_upsample_pix_rep] = resampler(Cb_components_subsampled, Cr_components_subsampled);
+% plot
+subplot(3,2,5);
+imshow(Cb_components_upsample_pix_rep, []);
+title("Cr Pix. Rep. Upsampling");
+subplot(3,2,6);
+imshow(Cr_components_upsample_pix_rep, []);
+title("Cr Pix. Rep. Upsampling");
