@@ -99,51 +99,51 @@ subplot(2,2,4);
 imshow(Cr_components, []);
 title("Cr Component");
 
-%% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands.
-% create System object for Sampling
-% https://www.mathworks.com/help/vision/ref/vision.chromaresampler-system-object.html#mw_57bd7bcc-9f89-491f-b859-bdd3b7029323
-
-% subsampling is the procedure of removing pixels and reducing image size
-
-% setting up subsample using 4:2:0
-resampler = vision.ChromaResampler;
-resampler.Resampling = '4:4:4 to 4:2:0 (MPEG1)';
-% apply subsample to Cb and Cr components
-[Cb_components_subsampled, Cr_components_subsampled] = resampler(Cb_components, Cr_components);
-% plot
-figure(3);
-subplot(3,2,1);
-imshow(Cb_components_subsampled, []);
-title("Cb 4:2:0 Subsampling");
-subplot(3,2,2);
-imshow(Cr_components_subsampled, []);
-title("Cr 4:2:0 Subsampling");
-
-%% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
-% setting up upscale using linear interpolation
-release(resampler);
-resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
-resampler.InterpolationFilter = "Linear"; % LINEAR IS THE DEFAULT
-% apply upsample to Cb and Cr components
-[Cb_components_upsample_lint_int, Cr_components_upsample_lin_int] = resampler(Cb_components_subsampled, Cr_components_subsampled);
-% plot
-subplot(3,2,3);
-imshow(Cb_components_upsample_lint_int, []);
-title("Cb Lin. Int. Upsampling.");
-subplot(3,2,4);
-imshow(Cr_components_upsample_lin_int, []);
-title("Cr Lin. Int. Upsampling");
-%% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
-% setting up upsample using pixel replication
-release(resampler);
-resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
-resampler.InterpolationFilter = 'Pixel replication';
-% apply upsample to Cb and Cr components
-[Cb_components_upsample_pix_rep, Cr_components_upsample_pix_rep] = resampler(Cb_components_subsampled, Cr_components_subsampled);
-% plot
-subplot(3,2,5);
-imshow(Cb_components_upsample_pix_rep, []);
-title("Cr Pix. Rep. Upsampling");
-subplot(3,2,6);
-imshow(Cr_components_upsample_pix_rep, []);
-title("Cr Pix. Rep. Upsampling");
+% %% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands.
+% % create System object for Sampling
+% % https://www.mathworks.com/help/vision/ref/vision.chromaresampler-system-object.html#mw_57bd7bcc-9f89-491f-b859-bdd3b7029323
+% 
+% % subsampling is the procedure of removing pixels and reducing image size
+% 
+% % setting up subsample using 4:2:0
+% resampler = vision.ChromaResampler;
+% resampler.Resampling = '4:4:4 to 4:2:0 (MPEG1)';
+% % apply subsample to Cb and Cr components
+% [Cb_components_subsampled, Cr_components_subsampled] = resampler(Cb_components, Cr_components);
+% % plot
+% figure(3);
+% subplot(3,2,1);
+% imshow(Cb_components_subsampled, []);
+% title("Cb 4:2:0 Subsampling");
+% subplot(3,2,2);
+% imshow(Cr_components_subsampled, []);
+% title("Cr 4:2:0 Subsampling");
+% 
+% %% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
+% % setting up upscale using linear interpolation
+% release(resampler);
+% resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
+% resampler.InterpolationFilter = "Linear"; % LINEAR IS THE DEFAULT
+% % apply upsample to Cb and Cr components
+% [Cb_components_upsample_lint_int, Cr_components_upsample_lin_int] = resampler(Cb_components_subsampled, Cr_components_subsampled);
+% % plot
+% subplot(3,2,3);
+% imshow(Cb_components_upsample_lint_int, []);
+% title("Cb Lin. Int. Upsampling.");
+% subplot(3,2,4);
+% imshow(Cr_components_upsample_lin_int, []);
+% title("Cr Lin. Int. Upsampling");
+% %% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
+% % setting up upsample using pixel replication
+% release(resampler);
+% resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
+% resampler.InterpolationFilter = 'Pixel replication';
+% % apply upsample to Cb and Cr components
+% [Cb_components_upsample_pix_rep, Cr_components_upsample_pix_rep] = resampler(Cb_components_subsampled, Cr_components_subsampled);
+% % plot
+% subplot(3,2,5);
+% imshow(Cb_components_upsample_pix_rep, []);
+% title("Cr Pix. Rep. Upsampling");
+% subplot(3,2,6);
+% imshow(Cr_components_upsample_pix_rep, []);
+% title("Cr Pix. Rep. Upsampling");
