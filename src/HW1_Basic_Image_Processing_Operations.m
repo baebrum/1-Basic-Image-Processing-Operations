@@ -8,8 +8,8 @@
 %       3.2. Matlab also provides a command "ycbcr2rgb" to convert a YCbCr image into 
 %       RGB format.   
 % DONE: 4. Display each band separately (Y, Cb and Cr bands). (10 points) 
-
 % DONE: 5. Subsample Cb and Cr bands using 4:2:0 and display both bands. (10 points) 
+
 % TODO: 6. Upsample and display the Cb and Cr bands using: (15 points) 
 %       6.1. Linear interpolation 
 %       6.2. Simple row or column replication. 
