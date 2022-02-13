@@ -62,7 +62,7 @@ title("Blue Component")
 % RGB to YCbCr
 YCbCr_image = rgb2ycbcr(RGB_image);
 
-% Display each band separately (Y, Cb and Cr bands)
+%% 4. Display each band separately (Y, Cb and Cr bands)
 % separate components into their own variables and plot them
 [Y_components, Cb_components, Cr_components] = imsplit(YCbCr_image);
 figure(2);
