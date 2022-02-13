@@ -18,9 +18,9 @@
 %       coordinate). (5 points) 
 % DONE: 9. Comment on the visual quality of the reconstructed image for both the upsampling 
 %       cases. (5 points) 
-% TODO: 10. Measure MSE between the original and reconstructed images (obtained using linear 
+% DONE: 10. Measure MSE between the original and reconstructed images (obtained using linear 
 %       interpolation only). Comment on the results. (10 points) 
-% TODO: 11. Comment on the compression ratio achieved by subsampling Cb and Cr components 
+% DONE: 11. Comment on the compression ratio achieved by subsampling Cb and Cr components 
 %       for 4:2:0 approach. Please note that you do not send the pixels which are made zero in 
 %       the row and columns during subsampling. (5 points) 
 
@@ -106,10 +106,10 @@ Cr_420 = Cr_components(1:2:end,1:2:end);
 
 figure(3);
 subplot(1,2,1);
-imshow(Cb_420, []);
+imshow(Cb_420);
 title("Subsampled Cb 4:2:0");
 subplot(1,2,2);
-imshow(Cr_420, []);
+imshow(Cr_420);
 title("Subsampled Cr 4:2:0");
 
 %% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
