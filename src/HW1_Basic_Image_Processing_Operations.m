@@ -11,7 +11,7 @@
 % DONE: 5. Subsample Cb and Cr bands using 4:2:0 and display both bands. (10 points) 
 % DONE: 6. Upsample and display the Cb and Cr bands using: (15 points) 
 %       6.1. Linear interpolation 
-%       6.2. Simple row or column replication. 
+%       6.2. Simple row/column replication. 
 
 % DONE: 7. Convert the image into RGB format. (5 points) 
 % DONE: 8. Display the original and reconstructed images (the image restored from the YCbCr 
@@ -24,21 +24,13 @@
 %       for 4:2:0 approach. Please note that you do not send the pixels which are made zero in 
 %       the row and columns during subsampling. (5 points) 
 
-
-% Read and display the image using Matlab (10 points). 
-% EXAMPLE
-% imfinfo('landscape.jpg')
-% RGBImage = imread(‘landscape.jpg’,’jpg’);
-% imshow(RGBImage);
-% size(RGBImage)
-
 clc;	% Clear command window.
 clear;
 close all;	% Close all figure windows except those created by imtool.
 workspace;	% Make sure the workspace panel is showing.
 
-%% 1. shows project 1 image
-% figure(1);
+%% 1. Read and display "Flooded_house.jpg"
+figure(1);
 subplot(2,2,1);
 imfinfo("Flooded_house.jpg");
 RGB_image = imread("Flooded_house.jpg", "jpg");
@@ -48,53 +40,43 @@ title("RGB Image");
 
 %% 2. Display each band
 % Extracts RGB components
-
-% store image in 3 variables with one line
-[red_components, green_components, blue_components] = deal(RGB_image);
+[red_components, green_components, blue_components] = deal(RGB_image); % store image in 3 variables with one line
 red_components(:,:,[2,3]) = 0; % set G,B to zero // shows up as red
 green_components(:,:,[1,3]) = 0; % set R,B to zero // shows up as green
 blue_components(:,:,[1,2]) = 0; % set R,G to zero // shows up as blue
 
-% ****** REVIEW ******
-% shows up as gray scale images
-% red_components = RGB_image(:,:,1);
-% green_components = RGB_image(:,:,2);
-% blue_components = RGB_image(:,:,3);
-
 % Displays components
-% figure(2);
 subplot(2,2,2);
 imshow(red_components);
 title("Red Component");
-% figure(3);
+
 subplot(2,2,3);
 imshow(green_components);
 title("Green Component");
-% figure(4)
+
 subplot(2,2,4);
 imshow(blue_components);
 title("Blue Component")
 
 %% 3. Convert image from RGB to YCbCr color space
+% RGB to YCbCr
 YCbCr_image = rgb2ycbcr(RGB_image);
-% figure(5);
-% figure(2);
-% imshow(YCbCr_image, []);
-% title("YCbCr Colorspace Image of Figure 1");
 
 % separate components into their own variables and plot them
 [Y_components, Cb_components, Cr_components] = imsplit(YCbCr_image);
-% figure(3);
 figure(2);
 subplot(2,2,1);
 imshow(YCbCr_image);
 title("YCbCr Colorspace Image RGB Image");
+
 subplot(2,2,2);
 imshow(Y_components);
 title("Luminance Y Component");
+
 subplot(2,2,3);
 imshow(Cb_components);
 title("Cb Component");
+
 subplot(2,2,4);
 imshow(Cr_components);
 title("Cr Component");
@@ -108,6 +90,7 @@ figure(3);
 subplot(1,2,1);
 imshow(Cb_420);
 title("Subsampled Cb 4:2:0");
+
 subplot(1,2,2);
 imshow(Cr_420);
 title("Subsampled Cr 4:2:0");
@@ -158,7 +141,7 @@ for rows = 2:upscaleFactor:(height(li_cr))
     end
 end
 
-%% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
+%% 6.2 Upsample and display the Cb and Cr bands using and Simple row/column replication
 % row column replication
 % complete missing pixels and copy next row
 for rows = 1:upscaleFactor:(height(rcr_cr))
@@ -170,17 +153,21 @@ for rows = 1:upscaleFactor:(height(rcr_cr))
     rcr_cb(rows+1,:) = rcr_cb(rows,:);
 end
 
-%% 6.3 Graph
+%% 6.3 Plot results
 figure(4);
+
 subplot(3,2,1);
 imshow(uint8(li_cb), [0, 255]);
 title("Upsampled LI Cb 4:2:0");
+
 subplot(3,2,2);
 imshow(uint8(li_cr), [0,255]);
 title("Upsampled LI Cr 4:2:0");
+
 subplot(3,2,3);
 imshow(uint8(rcr_cb), [0,255]);
 title("Upsampled RCR Cb 4:2:0");
+
 subplot(3,2,4);
 imshow(uint8(rcr_cr), [0,255]);
 title("Upsampled RCR Cr 4:2:0");
@@ -199,18 +186,22 @@ reconstructed_img_rcr = ycbcr2rgb(cat(3,Y_components,rcr_cb,rcr_cr));
 
 %% 8 Display the original and reconstructed images
 figure(5);
+
 subplot(2,2,1);
 imshow(reconstructed_img_li);
 title("Reconstructed LI Image");
+
 subplot(2,2,2);
 imshow(reconstructed_img_rcr);
 title("Reconstructed RCR Image");
+
 subplot(2,2,[3,4]);
 imshow(RGB_image);
 title("Original Image");
 
 %% 9 Comment on the visual quality of the reconstructed image for both
 %    upsampling cases.
+
 % A: The visual quality between the two reconstructed images is virtually
 %    identical from afar. Only minor differences can be seen in areas that 
 %    are well defined, such as the Coke can in the bottom right floating on
@@ -238,6 +229,7 @@ MSE = sum(((RGB_image - reconstructed_img_li).^2), 'all')/(width(RGB_image)*heig
 
 %% 11 Comment on the compression ratio achieved by subsampling Cb and Cr 
 %     components for 4:2:0 approach.
+
 %   Comment: Using the 4:2:0 approach, we can compress our original image
 %   by a factor of essentially 4. This is because we scale down our Cb and 
 %   Cr components by 2x2 and then recalculating those missing pixels by virtue
