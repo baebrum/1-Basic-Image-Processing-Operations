@@ -104,20 +104,16 @@ title("Cr Component");
 % https://www.mathworks.com/help/vision/ref/vision.chromaresampler-system-object.html#mw_57bd7bcc-9f89-491f-b859-bdd3b7029323
 
 % subsampling is the procedure of removing pixels and reducing image size
+Cb_420 = Cb_components(1:2:end,1:2:end);
+Cr_420 = Cr_components(1:2:end,1:2:end);
 
-% setting up subsample using 4:2:0
-resampler = vision.ChromaResampler;
-resampler.Resampling = '4:4:4 to 4:2:0 (MPEG1)';
-% apply subsample to Cb and Cr components
-[Cb_components_subsampled, Cr_components_subsampled] = resampler(Cb_components, Cr_components);
-% plot
-figure(3);
-subplot(3,2,1);
-imshow(Cb_components_subsampled, []);
-title("Cb 4:2:0 Subsampling");
-subplot(3,2,2);
-imshow(Cr_components_subsampled, []);
-title("Cr 4:2:0 Subsampling");
+figure(3)
+subplot(1,2,1);
+imshow(Cb_420, []);
+title("Subsampled Cb 4:2:0");
+subplot(1,2,2);
+imshow(Cr_420, []);
+title("Subsampled Cr 4:2:0");
 
 %% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
 % setting up upscale using linear interpolation
