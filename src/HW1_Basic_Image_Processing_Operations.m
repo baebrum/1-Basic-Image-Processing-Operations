@@ -118,7 +118,7 @@ upscaleFactor = 2;
 upsampled_cb = zeros(size(Cb_420,1)*upscaleFactor, length(Cb_420)*upscaleFactor);
 upsampled_cr = zeros(size(Cr_420,1)*upscaleFactor, length(Cr_420)*upscaleFactor);
 
-% map downsampled pixels to every other col/row
+% map subsampled pixels to every other col/row of scaled up matrix
 for rows = 1:(height(Cr_420))
     for cols = 1:(width(Cr_420))
         upsampled_cr(rows*upscaleFactor-1,cols*upscaleFactor-1) = Cr_420(rows,cols);
@@ -229,3 +229,24 @@ title("Original Image");
 
 %% 10 Measure MSE between the original and reconstructed images using
 %     linear interpolation only, Comment on the results.
+MSE = sum(((RGB_image - reconstructed_img_li).^2), 'all')/(width(RGB_image)*height(RGB_image));
+
+% Comment: This number is relatively small considering the size of our
+% matrix: 506x704x3. Based on the image from Canvas, this number is 25.1865.
+% This low number aligns with our previous observation that all the 
+% reconstructed images look roughly the same as the original image. 
+
+%% 11 Comment on the compression ratio achieved by subsampling Cb and Cr 
+%     components for 4:2:0 approach.
+%   Comment: Using the 4:2:0 approach, we can compress our original image
+%   by a factor of essentially 4. This is because we scale down our Cb and 
+%   Cr components by 2x2 and then recalculating those missing pixels by virtue
+%   of the other surrounding pixels that we didn't throw away. 
+%   By "throwing away" some of the redundancy information, we can deploy 
+%   either the Linear interpolation or
+%   Row column replication technique to reconstruct the compressed image
+%   back into its size. As noted by our observations in 9 and
+%   10, our losses are very minimal considering how many bits we had
+%   actually thrown away in the process of compressing the image.
+%   Essentialy despite throwing away 3/4 of the original bits, we are able
+%   to reconstruct our original image with impressive quality.
