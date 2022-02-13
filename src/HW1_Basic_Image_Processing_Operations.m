@@ -13,10 +13,10 @@
 %       6.1. Linear interpolation 
 %       6.2. Simple row or column replication. 
 
-% TODO: 7. Convert the image into RGB format. (5 points) 
-% TODO: 8. Display the original and reconstructed images (the image restored from the YCbCr 
+% DONE: 7. Convert the image into RGB format. (5 points) 
+% DONE: 8. Display the original and reconstructed images (the image restored from the YCbCr 
 %       coordinate). (5 points) 
-% TODO: 9. Comment on the visual quality of the reconstructed image for both the upsampling 
+% DONE: 9. Comment on the visual quality of the reconstructed image for both the upsampling 
 %       cases. (5 points) 
 % TODO: 10. Measure MSE between the original and reconstructed images (obtained using linear 
 %       interpolation only). Comment on the results. (10 points) 
@@ -100,9 +100,6 @@ imshow(Cr_components);
 title("Cr Component");
 
 %% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands.
-% create System object for Sampling
-% https://www.mathworks.com/help/vision/ref/vision.chromaresampler-system-object.html#mw_57bd7bcc-9f89-491f-b859-bdd3b7029323
-
 % subsampling is the procedure of removing pixels and reducing image size
 Cb_420 = Cb_components(1:2:end,1:2:end);
 Cr_420 = Cr_components(1:2:end,1:2:end);
@@ -195,3 +192,40 @@ title("Original Cb");
 subplot(3,2,6);
 imshow(Cr_components);
 title("Original Cr");
+
+%% 7 Convert the image into RGB format
+reconstructed_img_li = ycbcr2rgb(cat(3,Y_components,li_cb,li_cr));
+reconstructed_img_rcr = ycbcr2rgb(cat(3,Y_components,rcr_cb,rcr_cr));
+
+%% 8 Display the original and reconstructed images
+figure(5);
+subplot(2,2,1);
+imshow(reconstructed_img_li);
+title("Reconstructed LI Image");
+subplot(2,2,2);
+imshow(reconstructed_img_rcr);
+title("Reconstructed RCR Image");
+subplot(2,2,[3,4]);
+imshow(RGB_image);
+title("Original Image");
+
+%% 9 Comment on the visual quality of the reconstructed image for both
+%    upsampling cases.
+% A: The visual quality between the two reconstructed images is virtually
+%    identical from afar. Only minor differences can be seen in areas that 
+%    are well defined, such as the Coke can in the bottom right floating on
+%    water. In the RCR image, there is a black outline around the E whereas
+%    this is not present in both the LI and original image. This could be
+%    due to the fact that there is a black lettering ("diet"?) directly to
+%    the left of the E. Since RCR fills the missing pixels by sampling the
+%    pixel directly to the left, this makes sense. In the LI image, there
+%    is a slight discoloration or "hue" surrounding areas where the
+%    difference between pixels is large. Using the same example as before,
+%    the E in the LI image has a slight red tint to the white pixels
+%    surrounding it whereas this is not present in the original image. This
+%    also makes sense since LI fills in the missing pixels with an average
+%    of the pixels around it, leading to a "blur" effect on areas with high
+%    contrast.
+
+%% 10 Measure MSE between the original and reconstructed images using
+%     linear interpolation only, Comment on the results.
