@@ -149,12 +149,12 @@ imshow(upsampled_cr, []);
 title("Upsampled Cr 4:2:0");
 
 subplot(3,2,5);
-imshow(Cr_components, []);
-title("Original Cr");
-
-subplot(3,2,6);
 imshow(Cb_components, []);
 title("Original Cb");
+
+subplot(3,2,6);
+imshow(Cr_components, []);
+title("Original Cr");
 
 
 
