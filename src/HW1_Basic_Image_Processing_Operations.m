@@ -107,21 +107,65 @@ title("Cr Component");
 Cb_420 = Cb_components(1:2:end,1:2:end);
 Cr_420 = Cr_components(1:2:end,1:2:end);
 
-figure(3)
-subplot(1,2,1);
+figure(3);
+subplot(3,2,1);
 imshow(Cb_420, []);
 title("Subsampled Cb 4:2:0");
-subplot(1,2,2);
+subplot(3,2,2);
 imshow(Cr_420, []);
 title("Subsampled Cr 4:2:0");
 
 %% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
 % setting up upscale using linear interpolation
-release(resampler);
-resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
-resampler.InterpolationFilter = "Linear"; % LINEAR IS THE DEFAULT
+% scaling up dimensions
+upscaleFactor = 2;
+upsampled_cb = zeros(size(Cb_420,1)*upscaleFactor, length(Cb_420)*upscaleFactor);
+upsampled_cr = zeros(size(Cr_420,1)*upscaleFactor, length(Cr_420)*upscaleFactor);
+
+% map downsampled pixels to every other col/row
+for rows = 1:(height(Cr_420))
+    for cols = 1:(width(Cr_420))
+        upsampled_cr(rows*upscaleFactor-1,cols*upscaleFactor-1) = Cr_420(rows,cols);
+        upsampled_cb(rows*upscaleFactor-1,cols*upscaleFactor-1) = Cb_420(rows,cols);
+    end
+end
+
+% row column replication
+% complete missing pixels and copy next row
+for rows = 1:upscaleFactor:(height(upsampled_cr))
+    for cols = 2:upscaleFactor:(width(upsampled_cr))
+        upsampled_cr(rows,cols) = upsampled_cr(rows,cols-1);
+        upsampled_cb(rows,cols) = upsampled_cb(rows,cols-1);
+    end
+    upsampled_cr(rows+1,:) = upsampled_cr(rows,:);
+    upsampled_cb(rows+1,:) = upsampled_cb(rows,:);
+end
+
+subplot(3,2,3);
+imshow(upsampled_cb, []);
+title("Upsampled  Cb 4:2:0");
+subplot(3,2,4);
+imshow(upsampled_cr, []);
+title("Upsampled Cr 4:2:0");
+
+subplot(3,2,5);
+imshow(Cr_components, []);
+title("Original Cr");
+
+subplot(3,2,6);
+imshow(Cb_components, []);
+title("Original Cb");
+
+
+
+print()
+% fill in skipped pixel values with avg of neighboring pixels
+% linear interpolation
+
+
 % apply upsample to Cb and Cr components
-[Cb_components_upsample_lint_int, Cr_components_upsample_lin_int] = resampler(Cb_components_subsampled, Cr_components_subsampled);
+print()
+
 % plot
 subplot(3,2,3);
 imshow(Cb_components_upsample_lint_int, []);
