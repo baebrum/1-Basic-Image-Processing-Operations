@@ -64,15 +64,15 @@ blue_components(:,:,[1,2]) = 0; % set R,G to zero // shows up as blue
 % Displays components
 % figure(2);
 subplot(2,2,2);
-imshow(red_components, []);
+imshow(red_components);
 title("Red Component");
 % figure(3);
 subplot(2,2,3);
-imshow(green_components, []);
+imshow(green_components);
 title("Green Component");
 % figure(4)
 subplot(2,2,4);
-imshow(blue_components, []);
+imshow(blue_components);
 title("Blue Component")
 
 %% 3. Convert image from RGB to YCbCr color space
@@ -87,16 +87,16 @@ YCbCr_image = rgb2ycbcr(RGB_image);
 % figure(3);
 figure(2);
 subplot(2,2,1);
-imshow(YCbCr_image, []);
+imshow(YCbCr_image);
 title("YCbCr Colorspace Image RGB Image");
 subplot(2,2,2);
-imshow(Y_components, []);
+imshow(Y_components);
 title("Luminance Y Component");
 subplot(2,2,3);
-imshow(Cb_components, []);
+imshow(Cb_components);
 title("Cb Component");
 subplot(2,2,4);
-imshow(Cr_components, []);
+imshow(Cr_components);
 title("Cr Component");
 
 %% 5. Subsample Cb and Cr bands using 4:2:0 and display both bands.
@@ -108,15 +108,14 @@ Cb_420 = Cb_components(1:2:end,1:2:end);
 Cr_420 = Cr_components(1:2:end,1:2:end);
 
 figure(3);
-subplot(3,2,1);
+subplot(1,2,1);
 imshow(Cb_420, []);
 title("Subsampled Cb 4:2:0");
-subplot(3,2,2);
+subplot(1,2,2);
 imshow(Cr_420, []);
 title("Subsampled Cr 4:2:0");
 
 %% 6.1 Upsample and display the Cb and Cr bands using linear interpolation
-% setting up upscale using linear interpolation
 % scaling up dimensions
 upscaleFactor = 2;
 upsampled_cb = zeros(size(Cb_420,1)*upscaleFactor, length(Cb_420)*upscaleFactor);
@@ -130,60 +129,69 @@ for rows = 1:(height(Cr_420))
     end
 end
 
-% row column replication
-% complete missing pixels and copy next row
-for rows = 1:upscaleFactor:(height(upsampled_cr))
-    for cols = 2:upscaleFactor:(width(upsampled_cr))
-        upsampled_cr(rows,cols) = upsampled_cr(rows,cols-1);
-        upsampled_cb(rows,cols) = upsampled_cb(rows,cols-1);
+rcr_cr = upsampled_cr;
+rcr_cb = upsampled_cb;
+li_cr = upsampled_cr;
+li_cb = upsampled_cb;
+
+% linear interpolation
+% compute odd rows
+for rows = 1:upscaleFactor:(height(li_cr))
+    for cols = 2:upscaleFactor:width(li_cr)
+        if cols+1>width(li_cr)  % edge case for out of bounds indexing
+            li_cr(rows,cols) = li_cr(rows,cols-1);
+            li_cb(rows,cols) = li_cb(rows,cols-1);
+        else % truncate down for dec answers
+            li_cr(rows,cols) = floor((li_cr(rows,cols-1) + li_cr(rows, cols+1))/upscaleFactor);
+            li_cb(rows,cols) = floor((li_cb(rows,cols-1) + li_cb(rows, cols+1))/upscaleFactor);
+        end
     end
-    upsampled_cr(rows+1,:) = upsampled_cr(rows,:);
-    upsampled_cb(rows+1,:) = upsampled_cb(rows,:);
 end
 
+% compute even rows
+for rows = 2:upscaleFactor:(height(li_cr))
+    for cols = 1:width(li_cr)
+        if rows+1>height(li_cr)  % edge case for out of bounds indexing
+            li_cr(rows,cols) = li_cr(rows-1,cols);
+            li_cb(rows,cols) = li_cb(rows-1,cols);
+        else % truncate down for dec answers
+            li_cr(rows,cols) = floor((li_cr(rows-1,cols) + li_cr(rows+1, cols))/upscaleFactor);
+            li_cb(rows,cols) = floor((li_cb(rows-1,cols) + li_cb(rows+1, cols))/upscaleFactor);
+        end
+    end
+end
+
+%% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
+% row column replication
+% complete missing pixels and copy next row
+for rows = 1:upscaleFactor:(height(rcr_cr))
+    for cols = 2:upscaleFactor:(width(rcr_cr))
+        rcr_cr(rows,cols) = rcr_cr(rows,cols-1);
+        rcr_cb(rows,cols) = rcr_cb(rows,cols-1);
+    end
+    rcr_cr(rows+1,:) = rcr_cr(rows,:);
+    rcr_cb(rows+1,:) = rcr_cb(rows,:);
+end
+
+%% 6.3 Graph
+figure(4);
+subplot(3,2,1);
+imshow(uint8(li_cb), [0, 255]);
+title("Upsampled LI Cb 4:2:0");
+subplot(3,2,2);
+imshow(uint8(li_cr), [0,255]);
+title("Upsampled LI Cr 4:2:0");
 subplot(3,2,3);
-imshow(upsampled_cb, []);
-title("Upsampled  Cb 4:2:0");
+imshow(uint8(rcr_cb), [0,255]);
+title("Upsampled RCR Cb 4:2:0");
 subplot(3,2,4);
-imshow(upsampled_cr, []);
-title("Upsampled Cr 4:2:0");
+imshow(uint8(rcr_cr), [0,255]);
+title("Upsampled RCR Cr 4:2:0");
 
 subplot(3,2,5);
-imshow(Cb_components, []);
+imshow(Cb_components);
 title("Original Cb");
 
 subplot(3,2,6);
-imshow(Cr_components, []);
+imshow(Cr_components);
 title("Original Cr");
-
-
-
-print()
-% fill in skipped pixel values with avg of neighboring pixels
-% linear interpolation
-
-
-% apply upsample to Cb and Cr components
-print()
-
-% plot
-subplot(3,2,3);
-imshow(Cb_components_upsample_lint_int, []);
-title("Cb Lin. Int. Upsampling.");
-subplot(3,2,4);
-imshow(Cr_components_upsample_lin_int, []);
-title("Cr Lin. Int. Upsampling");
-%% 6.2 Upsample and display the Cb and Cr bands using Simple row or column replication
-% setting up upsample using pixel replication
-release(resampler);
-resampler.Resampling = '4:2:0 (MPEG1) to 4:4:4';
-resampler.InterpolationFilter = 'Pixel replication';
-% apply upsample to Cb and Cr components
-[Cb_components_upsample_pix_rep, Cr_components_upsample_pix_rep] = resampler(Cb_components_subsampled, Cr_components_subsampled);
-% plot
-subplot(3,2,5);
-imshow(Cb_components_upsample_pix_rep, []);
-title("Cr Pix. Rep. Upsampling");
-subplot(3,2,6);
-imshow(Cr_components_upsample_pix_rep, []);
-title("Cr Pix. Rep. Upsampling");
