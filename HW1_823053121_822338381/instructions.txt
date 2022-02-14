@@ -1,0 +1,3 @@
+Execute README.m through the Run script function in MATLAB.
+All questions as well as all comments can be found in that file.
+No other file is necessary to run the code for this assignment.
