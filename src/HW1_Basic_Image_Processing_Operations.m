@@ -1,3 +1,10 @@
+%% Compe565 Homework 1
+% February 13th, 2022
+% Names: Abraham Carranza (822338381
+%        Ryan Shimizu (823053121)
+% Emails: acarranza4510@sdsu.edu
+%         rshimizu3229@sdsu.edu
+%
 % DONE: 1. Read and display the image using Matlab (10 points). 
 % DONE: 2. Display each band (Red, Green and Blue) of the image file (15 points) 
 %       Hint: Red = I[:][:][1] captures the read component of the image and stores it into 
