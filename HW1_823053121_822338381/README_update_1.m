@@ -211,7 +211,7 @@ while counter < 300
     counter = counter + 1;
     elapsed_time_abraham(counter) = toc;
 end
-disp("Test")
+
 %% 6.2 Upsample and display the Cb and Cr bands using and Simple row/column replication
 % row column replication
 % complete missing pixels and copy next row
@@ -315,6 +315,6 @@ MSE = sum(((RGB_image - reconstructed_img_li).^2), 'all')/(width(RGB_image)*heig
 %   to reconstruct our original image with impressive quality.
 
 
-%% Compute Difference in 4 Loops and 2 Loops Matrix Arithmetic
-percent_difference = ((elapsed_time_abraham-elapsed_time_ryan)./(t)*100;
+%% Compute Difference of 4 Loops and 2 Loops Matrix Arithmetic linear interpolation
+percent_difference = ((abs(elapsed_time_abraham-elapsed_time_ryan))./(elapsed_time_ryan))*100;
 percent_difference_avg = mean(percent_difference);
